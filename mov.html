@@ -1,0 +1,369 @@
+<html><head><base href="/">
+<title>StreamFlix - Movies &amp; TV</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #e50914;
+  --dark: #141414;
+  --light: #f5f5f5;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--dark);
+  color: var(--light);
+}
+
+.navbar {
+  background: rgba(0,0,0,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.search-container input {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+}
+
+.search-container input:focus {
+  background: rgba(255,255,255,0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(229,9,20,0.2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.movie-card {
+  background: rgba(0,0,0,0.6);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(229,9,20,0.2);
+  border-color: var(--primary);
+}
+
+.movie-card img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover img {
+  transform: scale(1.05);
+}
+
+.movie-info {
+  padding: 1.25rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.7));
+}
+
+.movie-info h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.movie-info p {
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.player-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85vw;
+  height: 85vh;
+  background: black;
+  z-index: 1000;
+  display: none;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.close-player {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  color: white;
+  cursor: pointer;
+  z-index: 1001;
+  background: rgba(0,0,0,0.5);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.close-player:hover {
+  background: var(--primary);
+  transform: rotate(90deg);
+}
+
+#videoPlayer {
+  width: 100%;
+  height: calc(100% - 60px);
+  border: none;
+  border-radius: 16px 16px 0 0;
+}
+
+.episode-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(0,0,0,0.9);
+  padding: 10px 20px;
+  border-radius: 0 0 16px 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.episode-select {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.episode-select:focus {
+  border-color: var(--primary);
+}
+
+.go-button {
+  background: #2ecc71;
+  color: white;
+  padding: 5px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.go-button:hover {
+  background: #27ae60;
+  transform: translateY(-1px);
+}
+
+.category-tag {
+  background: var(--primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.rating {
+  color: #ffd700;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .movie-card img {
+    height: 240px;
+  }
+
+  .player-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  #videoPlayer {
+    border-radius: 0;
+  }
+
+  .episode-controls {
+    border-radius: 0;
+  }
+}
+</style>
+</head>
+<body class="min-h-screen">
+<nav class="navbar fixed w-full px-6 py-4 z-50">
+  <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-primary">StreamFlix</h1>
+    <div class="search-container flex-1 max-w-xl mx-8">
+      <div class="relative">
+        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        <input type="text" id="search" class="w-full pl-10 pr-4 py-2 rounded-full text-white outline-none" placeholder="Search movies and TV shows...">
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="content pt-24 pb-12 px-6 max-w-7xl mx-auto">
+  <div class="grid" id="results"></div>
+</main>
+
+<div class="player-container">
+  <div class="close-player">
+    <i class="fas fa-times"></i>
+  </div>
+  <iframe id="videoPlayer" allowfullscreen></iframe>
+  <div class="episode-controls">
+    <select id="seasonSelect" class="episode-select"></select>
+    <select id="episodeSelect" class="episode-select"></select>
+    <button id="goButton" class="go-button">Go</button>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>const TMDB_API_KEY = '14f5f562e442151a000f9cdca2371efb';
+const TMDB_API_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxNGY1ZjU2MmU0NDIxNTFhMDAwZjljZGNhMjM3MWVmYiIsInN1YiI6IjY1MzU5ZTYwYzhhNWFjMDExY2YwNWNkZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.CaHMAamkArB_IXMrS0nRmFp8th-aw-7nxvARRIXQW3w';
+let currentTvShow = null;
+async function searchContent(query) {
+  const response = await fetch(`/tmdb/3/search/multi?api_key=${TMDB_API_KEY}&query=${query}`);
+  const data = await response.json();
+  displayResults(data.results.filter(item => item.media_type === 'movie' || item.media_type === 'tv'));
+}
+function displayResults(results) {
+  const container = document.getElementById('results');
+  container.innerHTML = '';
+  results.forEach(item => {
+    if ((item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path) {
+      const card = document.createElement('div');
+      card.className = 'movie-card';
+      const rating = Math.round(item.vote_average * 10) / 10;
+      card.innerHTML = `
+        <div class="relative overflow-hidden">
+          <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" 
+               onerror="this.src='https://via.placeholder.com/500x750'"
+               alt="${item.title || item.name}">
+          <div class="movie-info">
+            <div class="flex items-center justify-between mb-2">
+              <span class="category-tag">${item.media_type.toUpperCase()}</span>
+              <span class="rating"><i class="fas fa-star mr-1"></i>${rating}</span>
+            </div>
+            <h3 class="truncate">${item.title || item.name}</h3>
+            <p class="text-sm text-gray-300 line-clamp-2">${item.overview || 'No description available.'}</p>
+          </div>
+        </div>
+      `;
+      card.onclick = () => playContent(item);
+      container.appendChild(card);
+    }
+  });
+}
+async function fetchTvShowDetails(tvId) {
+  const response = await fetch(`/tmdb/3/tv/${tvId}?api_key=${TMDB_API_KEY}`);
+  return await response.json();
+}
+function updateEpisodeSelectors(tvShow) {
+  const seasonSelect = document.getElementById('seasonSelect');
+  const episodeSelect = document.getElementById('episodeSelect');
+  seasonSelect.innerHTML = '';
+  episodeSelect.innerHTML = '';
+  if (!tvShow || !tvShow.seasons) return;
+  const validSeasons = tvShow.seasons.filter(season => season.season_number > 0).sort((a, b) => a.season_number - b.season_number);
+  validSeasons.forEach(season => {
+    const option = document.createElement('option');
+    option.value = season.season_number;
+    option.textContent = `Season ${season.season_number}`;
+    seasonSelect.appendChild(option);
+  });
+  if (validSeasons.length > 0) {
+    loadEpisodesForSeason(tvShow.id, validSeasons[0].season_number);
+  }
+}
+async function loadEpisodesForSeason(tvId, seasonNumber) {
+  const response = await fetch(`/tmdb/3/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`);
+  const seasonData = await response.json();
+  const episodeSelect = document.getElementById('episodeSelect');
+  episodeSelect.innerHTML = '';
+  seasonData.episodes.forEach(episode => {
+    const option = document.createElement('option');
+    option.value = episode.episode_number;
+    option.textContent = `Episode ${episode.episode_number}: ${episode.name}`;
+    episodeSelect.appendChild(option);
+  });
+}
+async function playContent(item) {
+  const playerContainer = document.querySelector('.player-container');
+  const episodeControls = document.querySelector('.episode-controls');
+  playerContainer.style.display = 'block';
+  if (item.media_type === 'tv') {
+    currentTvShow = await fetchTvShowDetails(item.id);
+    episodeControls.style.display = 'flex';
+    updateEpisodeSelectors(currentTvShow);
+    const seasonNumber = document.getElementById('seasonSelect').value;
+    const episodeNumber = document.getElementById('episodeSelect').value;
+    document.getElementById('videoPlayer').src = `/movapi/tt.php?type=tv&id=${item.id}&s=${seasonNumber}&e=1`;
+  } else {
+    episodeControls.style.display = 'none';
+    currentTvShow = null;
+    document.getElementById('videoPlayer').src = `/movapi/tt.php?type=movie&id=${item.id}`;
+  }
+}
+document.querySelector('.close-player').onclick = () => {
+  const playerContainer = document.querySelector('.player-container');
+  playerContainer.style.display = 'none';
+  document.getElementById('videoPlayer').src = '';
+};
+document.getElementById('goButton').addEventListener('click', () => {
+  if (currentTvShow) {
+    const seasonNumber = document.getElementById('seasonSelect').value;
+    const episodeNumber = document.getElementById('episodeSelect').value;
+    document.getElementById('videoPlayer').src = `/movapi/tt.php?type=tv&id=${currentTvShow.id}&s=${seasonNumber}&e=${episodeNumber}`;
+  }
+});
+document.getElementById('seasonSelect').addEventListener('change', e => {
+  if (currentTvShow) {
+    loadEpisodesForSeason(currentTvShow.id, e.target.value);
+  }
+});
+document.getElementById('episodeSelect').addEventListener('change', e => {});
+let searchTimeout;
+document.getElementById('search').addEventListener('input', e => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const query = e.target.value.trim();
+    if (query) {
+      searchContent(query);
+    }
+  }, 500);
+});
+async function loadPopularContent() {
+  const response = await fetch(`/tmdb/3/trending/all/day?api_key=${TMDB_API_KEY}`);
+  const data = await response.json();
+  displayResults(data.results);
+}
+loadPopularContent();</script>
+</body></html>
