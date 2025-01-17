@@ -1,0 +1,21 @@
+<script>
+const requestOptions = {
+  method: 'POST',
+  headers: {
+    'Accept': '*/*',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Content-Type': 'application/json',
+    'Origin': 'https://thetvapp.to',
+    'Referer': 'https://thetvapp.to/tv/ae-live-stream/',
+    'X-Csrf-Token': 'YK7GpCa1WL1dWal5ptkfwXGFyND2xfYkbpGMGDML',
+    'Cookie': '__utma=103612485.1405868849.1707441279.1707441279.1707441279.1; __utmc=103612485; __utmz=103612485.1707441279.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); XSRF-TOKEN=eyJpdiI6Ik1SSTNPS2RQV3lvb3hRRzhsUmhEVGc9PSIsInZhbHVlIjoiYWwwbDBBd2VHc0UrYW1sZUpOWS8zU2tpL2NGYWxEYU45MjNYNXFvZDllRERsY2VTVksyY0hsWGQ3eW9tZmJPZFJmamdaNmxKSzljNDBqcUt4bVcwL21TTVVQSDBYTWk3dExjMSswTVFxcDVaVEF5NkxOQTBvamNQbjBkUTNudGkiLCJtYWMiOiI0YmEwMzc3ZjMzNWZjYmY2NGYzZmRmNGUxNzVkM2I4OTVmODlmNGZiYjAwNTQxZjk4Y2NhMzlkMDlmYzZhMTM0IiwidGFnIjoiIn0%3D; tvnow_session=eyJpdiI6Im4xNFd2azVMZ2ZJRDMzOXpDTTlzQnc9PSIsInZhbHVlIjoiSThoSVNzcDZSL3psZ2ZTRG5pdm55UWJHeHVVSnd2bEJZU3dJdmVoVS9YQVNpVGUxSzFteU1uT0Y2cS84OWlOQ0JtUGQ1ak1xRzdOSlBQZWdWd0NuOUczU2k3RFA5dmUzV3FkTnFCdXIrSFFsYU11WEg4emdPc0o0V2ZyWDBLMFciLCJtYWMiOiJiN2U0NTM2ODI5YjJjYzczMGExZTM4OTJjMGUxOTcyNGU0ZjRiMWFlMmU1NTQ2MmQ5MDc0NGYwNDAyYTUxODE5IiwidGFnIjoiIn0%3D'
+  },
+  body: JSON.stringify({ password: '5UgpfawICqQc' })
+};
+
+fetch('/livetv/token/AEEast', requestOptions)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.log('Error:', error));
+</script>

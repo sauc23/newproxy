@@ -1,0 +1,33 @@
+// netlify/functions/fetchM3U8.js
+
+const fetch = require('node-fetch');
+
+exports.handler = async (event, context) => {
+  try {
+    const response = await fetch('https://salamus2022.webhd.ru/ddh1/premium330/playlist.m3u8', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://weblivehdplay.ru/'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch M3U8 playlist: ${response.statusText}`);
+    }
+
+    const playlist = await response.text();
+
+    return {
+      statusCode: 200,
+      body: playlist,
+      headers: {
+        'Content-Type': 'application/vnd.apple.mpegurl'
+      }
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+};
